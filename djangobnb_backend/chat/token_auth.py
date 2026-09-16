@@ -9,10 +9,10 @@ from useraccount.models import User
 def get_user(token_key):
     try:
         token = AccessToken(token_key)
-        user_id = token.payload("user_id")
+        user_id = token.payload.get("user_id")
         return User.objects.get(pk=user_id)
     except Exception as e:
-        return AnonymousUser
+        return AnonymousUser()
 
 
 class TokenAuthMiddleware(BaseMiddleware):
