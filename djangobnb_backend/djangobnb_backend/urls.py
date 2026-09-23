@@ -19,9 +19,44 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
+
+@api_view(["GET"])
+def api_root(request, format=None):
+    return Response(
+        {
+            "properties": {
+                "list": reverse("api_properties_list", request=request, format=format),
+                "create": reverse(
+                    "api_create_property", request=request, format=format
+                ),
+            },
+            "chat": {
+                "conversations": reverse(
+                    "api_conversations_list", request=request, format=format
+                ),
+            },
+            "auth": {
+                "register": reverse("rest_register", request=request, format=format),
+                "login": reverse("rest_login", request=request, format=format),
+                "logout": reverse("rest_logout", request=request, format=format),
+                "token_refresh": reverse(
+                    "token_refresh", request=request, format=format
+                ),
+                "my_reservations": reverse(
+                    "api_reservations_list", request=request, format=format
+                ),
+            },
+        }
+    )
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/", api_root, name="api-root"),
     path("api/properties/", include("property.urls")),
     path("api/auth/", include("useraccount.urls")),
     path("api/chat/", include("chat.urls")),
