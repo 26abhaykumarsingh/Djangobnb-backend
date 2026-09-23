@@ -1,9 +1,9 @@
-from django.http import JsonResponse
 from rest_framework.decorators import (
     api_view,
     authentication_classes,
     permission_classes,
 )
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from useraccount.models import User
 
@@ -91,7 +91,7 @@ def properties_list(request):
 
     serializer = PropertiesListSerializer(properties, many=True)
 
-    return JsonResponse(
+    return Response(
         {
             "data": serializer.data,
             "favorites": favorites,
@@ -107,7 +107,7 @@ def properties_detail(request, pk):
 
     serializer = PropertiesDetailSerializer(property, many=False)
 
-    return JsonResponse(serializer.data)
+    return Response(serializer.data)
 
 
 @api_view(["GET"])
@@ -119,7 +119,7 @@ def property_reservations(request, pk):
 
     serializer = ReservationsListSerializer(reservations, many=True)
 
-    return JsonResponse(serializer.data, safe=False)
+    return Response(serializer.data)
 
 
 @api_view(["POST", "FILES"])
@@ -131,10 +131,10 @@ def create_property(request):
         property.landlord = request.user
         property.save()
 
-        return JsonResponse({"success": True})
+        return Response({"success": True})
     else:
         print("error", form.errors, form.non_field_errors)
-        return JsonResponse({"errors": form.errors.as_json()}, status=400)
+        return Response({"errors": form.errors.as_json()}, status=400)
 
 
 @api_view(["POST"])
@@ -158,11 +158,11 @@ def book_property(request, pk):
             created_by=request.user,
         )
 
-        return JsonResponse({"success": True})
+        return Response({"success": True})
     except Exception as e:
         print("Error", e)
 
-        return JsonResponse({"success": False})
+        return Response({"success": False})
 
 
 @api_view(["POST"])
@@ -172,8 +172,8 @@ def toggle_favorite(request, pk):
     if request.user in property.favorited.all():
         property.favorited.remove(request.user)
 
-        return JsonResponse({"is_favorite": False})
+        return Response({"is_favorite": False})
     else:
         property.favorited.add(request.user)
 
-        return JsonResponse({"is_favorite": True})
+        return Response({"is_favorite": True})
