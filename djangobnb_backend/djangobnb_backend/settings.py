@@ -33,7 +33,7 @@ AUTH_USER_MODEL = "useraccount.User"
 
 SITE_ID = 1
 
-WEBSITE_URL = "http://localhost:8000"
+WEBSITE_URL = os.environ.get("WEBSITE_URL", "http://localhost:3000")
 
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
